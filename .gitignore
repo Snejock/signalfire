@@ -1,0 +1,25 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+.DS_Store
+build/
+dist/
+wheels/
+*.egg-info
+
+# IDE
+.idea
+
+# Virtual environments
+.venv
+
+# Environments
+.env*
+
+# Logs
+*.log*
+
+# DBT
+dwh/dbt/target/
+dwh/dbt/dbt_packages/
+dwh/dbt/logs/
