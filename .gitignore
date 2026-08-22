@@ -10,10 +10,8 @@ wheels/
 # IDE
 .idea
 
-# Virtual environments
+# Environments and sessions
 .venv
-
-# Environments
 .env*
 
 # Logs
