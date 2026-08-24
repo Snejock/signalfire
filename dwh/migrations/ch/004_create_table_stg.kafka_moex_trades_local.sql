@@ -1,7 +1,7 @@
 -- Raw Kafka-таблица — consumer топика moex_trades_raw (Avro + Schema Registry).
 -- На каждом шарде свой независимый consumer с общим kafka_group_name —
 -- Redpanda сам разруливает партиции топика между консьюмерами группы.
-DROP TABLE IF EXISTS stg.kafka_moex_trades_local ON CLUSTER sharded;
+DROP TABLE IF EXISTS stg.kafka_moex_trades_local ON CLUSTER sharded SYNC;
 CREATE TABLE IF NOT EXISTS stg.kafka_moex_trades_local ON CLUSTER sharded
 (
     _source_system          LowCardinality(String),
