@@ -4,7 +4,7 @@ services:
   sgn-moex-fetcher:
     build:
       context: ../../../
-      dockerfile: ../compose/Dockerfile
+      dockerfile: services/moex-fetcher/compose/Dockerfile
     container_name: sgn-moex-fetcher
     env_file:
       - path: ../../../.env

@@ -13,7 +13,6 @@ WORKDIR /app
 # Копирование файлов конфигурации для кэширования слоёв
 COPY pyproject.toml uv.lock ./
 COPY shared/pyproject.toml ./shared/
-COPY dwh/migrations/rp ./dwh/migrations/rp
 COPY services/moex-fetcher/pyproject.toml ./services/moex-fetcher/
 
 # Установка зависимостей без исходного кода
@@ -28,6 +27,7 @@ RUN uv sync \
 # Копирование исходного кода
 COPY shared/ ./shared/
 COPY services/moex-fetcher/ ./services/moex-fetcher/
+COPY dwh/migrations/rp ./dwh/migrations/rp
 
 # Финальная синхронизация с кодом проекта
 RUN uv sync \
