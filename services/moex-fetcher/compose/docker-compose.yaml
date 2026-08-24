@@ -1,11 +1,11 @@
-name: chronica
+name: signalfire
 
 services:
-  chr-moex-fetcher:
+  sgn-moex-fetcher:
     build:
       context: ../../../
       dockerfile: ../compose/Dockerfile
-    container_name: chr-moex-fetcher
+    container_name: sgn-moex-fetcher
     env_file:
       - path: ../../../.env
         required: true
