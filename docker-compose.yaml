@@ -1,0 +1,9 @@
+name: signalfire
+
+include:
+  - services/moex-fetcher/compose/docker-compose.yaml
+
+networks:
+  dwh-net:
+    driver: bridge
+    name: dwh-net
