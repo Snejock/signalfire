@@ -1,5 +1,5 @@
-from typing import List
-from pydantic import BaseModel
+from typing import Annotated
+from pydantic import BaseModel, Field
 
 
 class DayRule(BaseModel):
@@ -18,7 +18,8 @@ class SpecialDateRule(BaseModel):
 
 class MOEX(BaseModel):
     timezone: str
-    weekly: List[DayRule]
-    special: List[SpecialDateRule] = []
+    weekly: list[DayRule]
+    special: list[SpecialDateRule] = []
     lag_start_minutes: int = 0
     lag_stop_minutes: int = 0
+    poll_interval_sec: Annotated[float, Field(gt=0)] = 2.0

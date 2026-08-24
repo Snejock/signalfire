@@ -125,7 +125,7 @@ class Application:
                 except Exception as e:
                     logger.exception("Unexpected error in main loop")
 
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(self.config.moex.poll_interval_sec)
 
         except asyncio.CancelledError:
             logger.info("Application stopping...")

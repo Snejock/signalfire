@@ -2,6 +2,7 @@ moex:
   timezone: "Europe/Moscow"
   lag_start_minutes: 10
   lag_stop_minutes: 20
+  poll_interval_sec: 2
 
   # базовое расписание по дням недели
   weekly:

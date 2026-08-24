@@ -32,6 +32,10 @@ def logger_setup(log_file_path: str = "log/main.log", level: int = logging.INFO)
     root_logger.addHandler(console_handler)
     root_logger.addHandler(file_handler)
 
+    # httpx логирует каждый запрос на уровне INFO ("HTTP Request: GET ... 200 OK") —
+    # для исключения шума в логах приложения, повышается уровень до WARNING
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+
     _def_configured = True
     root_logger.info("Logging setup complete")
     return root_logger
