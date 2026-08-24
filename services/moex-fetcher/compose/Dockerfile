@@ -10,9 +10,9 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
-# Копирование файлов конфигурации для кэширования слоёв
+# Копирование файлов конфигурации и кода shared (нужен целиком для сборки его пакета)
 COPY pyproject.toml uv.lock ./
-COPY shared/pyproject.toml ./shared/
+COPY shared/ ./shared/
 COPY services/moex-fetcher/pyproject.toml ./services/moex-fetcher/
 
 # Установка зависимостей без исходного кода
@@ -25,7 +25,6 @@ RUN uv sync \
     --package moex-fetcher
 
 # Копирование исходного кода
-COPY shared/ ./shared/
 COPY services/moex-fetcher/ ./services/moex-fetcher/
 COPY dwh/migrations/rp ./dwh/migrations/rp
 
