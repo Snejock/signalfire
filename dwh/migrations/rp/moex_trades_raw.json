@@ -1,0 +1,21 @@
+{
+  "type": "record",
+  "name": "moex_trades_raw",
+  "namespace": "signalfire",
+  "fields": [
+    {"name": "_source_system", "type": "string"},
+    {"name": "trade_no", "type": "long"},
+    {"name": "trade_dttm", "type": "long"},
+    {"name": "board_id", "type": "string"},
+    {"name": "sec_id", "type": "string"},
+    {"name": "price_amt", "type": "double"},
+    {"name": "quantity_cnt", "type": "long"},
+    {"name": "trade_value", "type": "double"},
+    {"name": "period_code", "type": "string"},
+    {"name": "systime_dttm", "type": "long"},
+    {"name": "buysell_code", "type": "string"},
+    {"name": "decimals_cnt", "type": "int"},
+    {"name": "tradingsession_code", "type": "string"},
+    {"name": "trade_session_dt", "type": "string"}
+  ]
+}
