@@ -12,6 +12,8 @@ services:
     restart: unless-stopped
     networks:
       - dwh-net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ../config/config.yml:/app/services/moex-fetcher/config/config.yml:ro
       - ../log:/app/services/moex-fetcher/log
