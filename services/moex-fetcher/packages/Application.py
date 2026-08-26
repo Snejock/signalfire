@@ -156,7 +156,7 @@ class Application:
 
         while True:
             try:
-                result = await self.ch_provider.query(sql="SELECT max(trade_no) FROM dds.moex_trades")
+                result = await self.ch_provider.query(sql="SELECT max(trade_no) FROM ods.moex_trades")
 
                 if result and result[0] and result[0][0] is not None:
                     self.cursor = int(result[0][0])

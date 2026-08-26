@@ -19,10 +19,6 @@ CREATE TABLE IF NOT EXISTS stg.kafka_moex_trades_local ON CLUSTER sharded
     tradingsession_code     LowCardinality(String),
     trade_session_dt        String
 )
--- Брокер адресуется по имени сервера (loki) и опубликованным на хосте портам,
--- а не по имени контейнера Redpanda и его портам внутри dwh-net (dwh-rp-1:9092/8081):
--- ClickHouse работает в network_mode: host на обоих узлах (odin, loki) и не имеет
--- доступа к Docker DNS сети dwh-net — резолвится только то, что прописано в extra_hosts.
 ENGINE = Kafka
 SETTINGS kafka_broker_list = 'loki:39092',
          kafka_topic_list = 'moex_trades_raw',

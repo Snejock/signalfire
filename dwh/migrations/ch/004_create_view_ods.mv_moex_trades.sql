@@ -1,7 +1,7 @@
--- Пишет из stg.kafka_moex_trades_local в dds.moex_trades (Distributed),
+-- Пишет из stg.kafka_moex_trades_local в ods.moex_trades (Distributed),
 -- приводя типы: Float64 -> Decimal64(6), строка YYYY-MM-DD -> Date.
-DROP VIEW IF EXISTS dds.mv_moex_trades_local ON CLUSTER sharded SYNC;
-CREATE MATERIALIZED VIEW IF NOT EXISTS dds.mv_moex_trades_local ON CLUSTER sharded TO dds.moex_trades AS
+DROP VIEW IF EXISTS ods.mv_moex_trades_local ON CLUSTER sharded SYNC;
+CREATE MATERIALIZED VIEW IF NOT EXISTS ods.mv_moex_trades_local ON CLUSTER sharded TO ods.moex_trades AS
     SELECT
         _source_system,
         trade_no,
