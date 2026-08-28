@@ -10,8 +10,8 @@ from packages.utils import MoexCalendar
 
 logger = logging.getLogger(__name__)
 
-TOPIC = "moex_trades_raw"
-SCHEMA_NM = "moex_trades_raw"
+TOPIC = "SGN_MOEX_TRADES_RAW"
+SCHEMA_NM = "SGN_MOEX_TRADES_RAW"
 
 
 class Application:

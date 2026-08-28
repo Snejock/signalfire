@@ -10,6 +10,9 @@ wheels/
 # IDE
 .idea
 
+# Claude Code local settings (personal permission overrides)
+.claude/settings.local.json
+
 # Environments and sessions
 .venv
 .env*
