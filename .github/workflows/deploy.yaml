@@ -27,7 +27,3 @@ jobs:
             cd /media/data/projects/signalfire
             git fetch origin main
             git reset --hard origin/main
-            mkdir -p /media/data/projects/dwh/rpc/signalfire                                                                                                                                                                                                                                                      
-            rsync -a --delete dwh/rpc/ /media/data/projects/dwh/rpc/signalfire/
-            mkdir -p /media/data/projects/dwh/migrations/signalfire                                                                                                                                                                                                                                               
-            rsync -a --delete dwh/migrations/ /media/data/projects/dwh/migrations/signalfire/

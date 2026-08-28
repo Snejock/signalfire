@@ -1,6 +1,6 @@
 {
   "type": "record",
-  "name": "moex_trades_raw",
+  "name": "SGN_MOEX_TRADES_RAW",
   "namespace": "signalfire",
   "fields": [
     {"name": "_source_system", "type": "string"},

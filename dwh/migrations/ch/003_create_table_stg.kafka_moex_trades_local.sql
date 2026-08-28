@@ -1,4 +1,4 @@
--- Raw Kafka-таблица — consumer топика moex_trades_raw (Avro + Schema Registry).
+-- Raw Kafka-таблица — consumer топика SGN_MOEX_TRADES_RAW (Avro + Schema Registry).
 -- На каждом шарде свой независимый consumer с общим kafka_group_name —
 -- Redpanda сам разруливает партиции топика между консьюмерами группы.
 DROP TABLE IF EXISTS stg.kafka_moex_trades_local ON CLUSTER sharded SYNC;
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS stg.kafka_moex_trades_local ON CLUSTER sharded
 )
 ENGINE = Kafka
 SETTINGS kafka_broker_list = 'loki:39092',
-         kafka_topic_list = 'moex_trades_raw',
+         kafka_topic_list = 'SGN_MOEX_TRADES_RAW',
          kafka_group_name = 'LOAD_CH_STG_MOEX_TRADES',
          kafka_format = 'AvroConfluent',
          format_avro_schema_registry_url = 'http://loki:38081'
