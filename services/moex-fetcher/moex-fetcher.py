@@ -1,7 +1,7 @@
 import logging
 import signal
 
-from packages.Application import Application
+from packages.application import Application
 from packages.logger.logger_setup import logger_setup
 
 logger = logging.getLogger(__name__)

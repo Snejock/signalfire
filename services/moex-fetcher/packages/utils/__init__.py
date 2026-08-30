@@ -1,1 +1,1 @@
-from .MoexCalendar import MoexCalendar
+from .moex_calendar import MoexCalendar

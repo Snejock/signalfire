@@ -24,3 +24,6 @@ wheels/
 dwh/dbt/target/
 dwh/dbt/dbt_packages/
 dwh/dbt/logs/
+
+# Assets
+assets/

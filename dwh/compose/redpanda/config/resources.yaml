@@ -1,0 +1,3 @@
+# /etc/redpanda-connect/resources.yaml
+# Пока пусто — добавить cache_resources/rate_limit_resources, когда появятся пайплайны в dwh/rpc,
+# которым это понадобится (см. пример в chronica/dwh/compose/redpanda/config/resources.yaml).
