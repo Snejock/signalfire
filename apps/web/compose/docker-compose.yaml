@@ -1,0 +1,49 @@
+name: signalfire
+
+services:
+  sgn-web-dev:
+    build:
+      context: ../
+      dockerfile: compose/Dockerfile
+      target: dev
+    container_name: sgn-web-dev
+    restart: unless-stopped
+    networks:
+      - dwh-net
+    ports:
+      - "33012:3000"
+    environment:
+      # В dev-контейнере sgn-api резолвится по имени, а не через host-порт 33010.
+      - VITE_API_PROXY_TARGET=http://sgn-api:8000
+    volumes:
+      - ../src:/app/src
+      - ../index.html:/app/index.html
+      - ../package.json:/app/package.json
+      - ../package-lock.json:/app/package-lock.json
+      - ../vite.config.ts:/app/vite.config.ts
+      - ../tsconfig.json:/app/tsconfig.json
+      - ../tsconfig.app.json:/app/tsconfig.app.json
+      - ../tsconfig.node.json:/app/tsconfig.node.json
+      - ../.oxlintrc.json:/app/.oxlintrc.json
+      - ../components.json:/app/components.json
+      - ../public:/app/public
+      - sgn-web-dev-modules:/app/node_modules
+
+  sgn-web-prod:
+    build:
+      context: ../
+      dockerfile: compose/Dockerfile
+      target: prod
+    container_name: sgn-web-prod
+    restart: unless-stopped
+    networks:
+      - dwh-net
+    ports:
+      - "33011:80"
+
+networks:
+  dwh-net:
+    external: true
+
+volumes:
+  sgn-web-dev-modules:
