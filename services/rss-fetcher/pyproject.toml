@@ -1,0 +1,24 @@
+[project]
+name = "rss-fetcher"
+version = "0.1.0"
+description = "RSS news fetcher"
+requires-python = ">=3.14"
+dependencies = [
+    "shared",
+    "pyyaml>=6.0.3",
+    "feedparser>=6.0.12",
+    "ftfy>=6.3.1",
+    "beautifulsoup4>=4.14.0",
+    "python-dateutil>=2.9.0",
+]
+
+[tool.uv.sources]
+shared = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
