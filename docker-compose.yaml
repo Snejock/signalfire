@@ -1,6 +1,7 @@
 name: signalfire
 
 include:
+  - services/api/compose/docker-compose.yaml
   - services/moex-fetcher/compose/docker-compose.yaml
   - services/rss-fetcher/compose/docker-compose.yaml
   - dwh/compose/redpanda/docker-compose.yaml
