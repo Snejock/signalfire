@@ -8,6 +8,8 @@ services:
       target: dev
     container_name: sgn-web-dev
     restart: unless-stopped
+    depends_on:
+      - sgn-api
     networks:
       - dwh-net
     ports:
@@ -36,6 +38,8 @@ services:
       target: prod
     container_name: sgn-web-prod
     restart: unless-stopped
+    depends_on:
+      - sgn-api
     networks:
       - dwh-net
     ports:
