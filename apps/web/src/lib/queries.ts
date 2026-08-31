@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useQuery, type UseQueryResult } from "@tanstack/react-query"
+import { keepPreviousData, useInfiniteQuery, useQuery, type UseQueryResult } from "@tanstack/react-query"
 import { fetchCandles, fetchCompanies, fetchNews } from "./api"
 import type { Company, Timeframe } from "./types"
 
@@ -25,6 +25,11 @@ export function useCandles(secId: string, timeframe: Timeframe) {
     // фоновый рефетч раз в 15с, пока график открыт.
     refetchInterval: 15_000,
     staleTime: 10_000,
+    // При смене timeframe queryKey меняется — без этого data на время нового запроса
+    // становится undefined, PriceChart размонтируется (Company.tsx рендерит skeleton
+    // вместо него) и теряет свой локальный mode (VWAP/свечи) при каждом переключении
+    // таймфрейма. Так — старые данные остаются на экране, пока грузятся новые.
+    placeholderData: keepPreviousData,
   })
 }
 

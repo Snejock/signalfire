@@ -30,14 +30,8 @@ export function fetchCompanies(): Promise<Company[]> {
   return request<Company[]>("/companies")
 }
 
-export function fetchCandles(
-  secId: string,
-  timeframe: Timeframe,
-  range?: { startDttm?: Date; endDttm?: Date },
-): Promise<CandlesResponse> {
+export function fetchCandles(secId: string, timeframe: Timeframe): Promise<CandlesResponse> {
   const params = new URLSearchParams({ timeframe })
-  if (range?.startDttm) params.set("start_dttm", range.startDttm.toISOString())
-  if (range?.endDttm) params.set("end_dttm", range.endDttm.toISOString())
   return request<CandlesResponse>(`/candles/${encodeURIComponent(secId)}?${params}`)
 }
 

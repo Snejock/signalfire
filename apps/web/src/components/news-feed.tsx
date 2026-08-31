@@ -65,7 +65,7 @@ export function NewsFeed() {
       <CardContent className="space-y-1">
         {isPending &&
           Array.from({ length: 5 }).map((_, i) => (
-            // biome-ignore lint: статичный список skeleton-заглушек
+            // Статичный список skeleton-заглушек — индекс как key безопасен, порядок/состав не меняется.
             <div key={i} className="flex gap-3 p-2">
               <Skeleton className="size-14 shrink-0 rounded-md" />
               <div className="flex-1 space-y-2 py-1">
