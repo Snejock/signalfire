@@ -49,10 +49,22 @@ export function withAlpha(rgba: string, alpha: number): string {
 // а дальше пользователь сам отматывает назад свайпом/скроллом при желании.
 export const DEFAULT_VISIBLE_BARS = 50
 
-// ClickHouse-DateTime -> unix-секунды: lightweight-charts работает с UTCTimestamp,
-// а не ISO-строками (конвертация — забота фронтенда, не формы API).
+// MOEX торгует по Europe/Moscow (UTC+3, без перехода на летнее время в РФ) — график должен
+// показывать биржевое время сессии, а не то, что получится от часового пояса браузера.
+const MSK_OFFSET_SECONDS = 3 * 60 * 60
+
+// ClickHouse-DateTime -> unix-секунды: lightweight-charts работает с UTCTimestamp, а не
+// ISO-строками (конвертация — забота фронтенда, не формы API). candle_dttm хранится и
+// приходит от API в UTC, но БЕЗ суффикса "Z"/офсета в строке ("2026-08-31T07:11:00") — а
+// такую ISO-строку без явной зоны new Date() трактует как ЛОКАЛЬНОЕ время браузера
+// пользователя (спецификация ES2015+), не UTC. Из-за этого график "плыл" на случайный сдвиг
+// в зависимости от часового пояса браузера. Явно парсим как UTC (добавляя "Z"), а затем
+// сдвигаем на MSK_OFFSET_SECONDS: lightweight-charts не знает часовых поясов и форматирует
+// переданный UTCTimestamp как есть, поэтому единственный способ показать именно
+// биржевое MSK-время — заранее сдвинуть сам timestamp.
 export function toUnixTime(ts: string): UTCTimestamp {
-  return Math.floor(new Date(ts).getTime() / 1000) as UTCTimestamp
+  const utcSeconds = Math.floor(Date.parse(ts.endsWith("Z") ? ts : `${ts}Z`) / 1000)
+  return (utcSeconds + MSK_OFFSET_SECONDS) as UTCTimestamp
 }
 
 // Объём — общая логика для VWAP- и candlestick-графика: нейтральным одним цветом (не
