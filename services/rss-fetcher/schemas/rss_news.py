@@ -1,9 +1,9 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Annotated
 
-from pydantic import BaseModel, Field
-from dateutil import parser
 import xxhash
+from dateutil import parser
+from pydantic import BaseModel, Field
 
 
 class RSSNews(BaseModel):
@@ -18,7 +18,7 @@ class RSSNews(BaseModel):
 
     @property
     def published_utc(self) -> datetime:
-        return parser.parse(self.published_loc).astimezone(timezone.utc)
+        return parser.parse(self.published_loc).astimezone(UTC)
 
     @property
     def news_id(self) -> str:

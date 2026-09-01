@@ -1,8 +1,8 @@
-from enum import Enum
 from datetime import datetime
+from enum import Enum
 from typing import Annotated
 
-from pydantic import BaseModel, Field, HttpUrl, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator
 
 from .location import Location
 

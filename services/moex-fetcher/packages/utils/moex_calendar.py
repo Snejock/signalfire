@@ -1,6 +1,7 @@
 import datetime as dt
 from zoneinfo import ZoneInfo  # Python 3.9+
 
+
 class MoexCalendar:
     def __init__(self, moex):  # moex = AppConfig.moex
         self.timezone = ZoneInfo(moex.timezone)

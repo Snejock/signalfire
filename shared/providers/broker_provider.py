@@ -94,5 +94,5 @@ class BrokerProvider:
         schema_dir = os.environ.get("DWH__SCHEMA_DIR", str(DEFAULT_SCHEMA_DIR))
         schema_path = os.path.join(schema_dir, f"{schema}.json")
 
-        with open(schema_path, "r") as f:
+        with open(schema_path) as f:
             return json.dumps(json.load(f))

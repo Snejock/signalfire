@@ -1,10 +1,11 @@
 import asyncio
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
-from schemas import AppConfig, RSSFeed, RSSNews
-from shared.providers import HttpProvider, PostgresProvider, BrokerProvider
 from packages.parsers import RSSFeedParser
+from schemas import AppConfig, RSSFeed, RSSNews
+
+from shared.providers import BrokerProvider, HttpProvider, PostgresProvider
 
 logger = logging.getLogger(__name__)
 
@@ -99,7 +100,7 @@ class Application:
         import yaml
 
         try:
-            with open(path, "r") as f:
+            with open(path) as f:
                 data = yaml.safe_load(f)
                 feed_list = [RSSFeed(**item) for item in data["rss_feeds"]]
                 return feed_list
@@ -161,10 +162,10 @@ class Application:
                 )
 
                 if result and result[0][0] is not None:
-                    feed.cursor = result[0][0].replace(tzinfo=timezone.utc)
+                    feed.cursor = result[0][0].replace(tzinfo=UTC)
                 else:
                     logger.warning("Table is empty or NULL returned, setting cursor to min datetime")
-                    feed.cursor = datetime.min.replace(tzinfo=timezone.utc)
+                    feed.cursor = datetime.min.replace(tzinfo=UTC)
 
                 logger.info(f"Cursor initialized for feed_nm {feed.name} (feed_id {feed.id}): {feed.cursor}")
                 return

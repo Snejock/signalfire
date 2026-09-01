@@ -1,9 +1,9 @@
 import logging
 
 from fastapi import APIRouter, Depends, Query
-
 from packages.dependencies import get_pg_provider
 from schemas import NewsItemOut, NewsPageOut
+
 from shared.providers import PostgresProvider
 
 logger = logging.getLogger(__name__)

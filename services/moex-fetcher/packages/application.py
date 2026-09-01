@@ -1,12 +1,13 @@
 import asyncio
 import logging
-import yaml
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-from schemas import AppConfig
-from shared.providers import ClickhouseProvider, MoexProvider, BrokerProvider
+import yaml
 from packages.utils import MoexCalendar
+from schemas import AppConfig
+
+from shared.providers import BrokerProvider, ClickhouseProvider, MoexProvider
 
 logger = logging.getLogger(__name__)
 
@@ -122,7 +123,7 @@ class Application:
                     else:
                         logger.debug("Received empty trades list")
 
-                except Exception as e:
+                except Exception:
                     logger.exception("Unexpected error in main loop")
 
                 await asyncio.sleep(self.config.moex.poll_interval_sec)
@@ -145,7 +146,7 @@ class Application:
     @staticmethod
     def _load_config(path: str) -> AppConfig:
         try:
-            with open(path, "r") as f:
+            with open(path) as f:
                 data = yaml.safe_load(f)
                 return AppConfig(**data)
         except FileNotFoundError:

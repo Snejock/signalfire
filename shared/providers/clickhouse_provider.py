@@ -1,5 +1,6 @@
 import asyncio
 import logging
+
 from clickhouse_connect import get_async_client
 
 logger = logging.getLogger(__name__)
@@ -59,7 +60,7 @@ class ClickhouseProvider:
             )
 
         except Exception:
-            logger.exception(f"ClickhouseProvider error")
+            logger.exception("ClickhouseProvider error")
 
     async def query(self, sql: str, params: dict|None = None) -> list[tuple|list]:
         """

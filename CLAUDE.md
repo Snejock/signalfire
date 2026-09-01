@@ -32,7 +32,15 @@ cd services/rss-fetcher && uv run pytest
 cd services/rss-fetcher && uv run pytest tests/test_image_extractor.py::test_rbc_enclosure  # один тест
 ```
 
-Линтер/форматтер в проекте не настроен — не выдумывать команды `ruff`/`black`/`mypy`.
+Линтер/форматтер — `ruff` (dev-зависимость workspace, конфиг в корневом `pyproject.toml`):
+
+```bash
+uv run ruff check .          # линтинг всего workspace
+uv run ruff check . --fix    # с автофиксом
+uv run ruff format .         # форматирование
+```
+
+`mypy` не настроен — не выдумывать такие команды.
 
 Локальный запуск сервисов также требует поднятого `dwh-net` (`docker network create dwh-net || true`)
 и доступной инфраструктуры (Postgres/ClickHouse/Redpanda) — см. `./dwh/README.md`.

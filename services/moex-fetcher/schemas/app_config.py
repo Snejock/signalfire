@@ -1,5 +1,5 @@
-from .moex import MOEX
 from .base_config import BaseConfig
+from .moex import MOEX
 
 
 class AppConfig(BaseConfig):

@@ -5,10 +5,10 @@ from contextlib import asynccontextmanager
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from packages.logger.logger_setup import logger_setup
 from packages.routers import candles, companies, health, news
 from schemas import AppConfig
+
 from shared.providers import ClickhouseProvider, PostgresProvider
 
 logger = logging.getLogger(__name__)

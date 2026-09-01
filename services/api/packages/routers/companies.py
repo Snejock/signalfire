@@ -1,10 +1,10 @@
 import logging
 
 from fastapi import APIRouter, Depends
-
 from packages.constants import MAIN_BOARD_ID
 from packages.dependencies import get_ch_provider
 from schemas import CompanyOut
+
 from shared.providers import ClickhouseProvider
 
 logger = logging.getLogger(__name__)

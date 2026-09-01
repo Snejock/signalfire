@@ -1,11 +1,11 @@
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-
 from packages.constants import MAIN_BOARD_ID
 from packages.dependencies import get_ch_provider
 from schemas import CandleOut, CandlesOut, Timeframe
+
 from shared.providers import ClickhouseProvider
 
 logger = logging.getLogger(__name__)
@@ -52,7 +52,7 @@ async def get_candles(
     if not exists or not exists[0][0]:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Unknown sec_id: {sec_id}")
 
-    end_dttm = end_dttm or datetime.now(timezone.utc)
+    end_dttm = end_dttm or datetime.now(UTC)
     start_dttm = start_dttm or (end_dttm - DEFAULT_LOOKBACK[timeframe])
 
     # open/close — AggregateFunction(argMin/argMax) states: AggregatingMergeTree не гарантирует,
