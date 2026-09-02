@@ -8,7 +8,7 @@ dwh:
       user: "{{ env_var('POSTGRES__USER') }}"
       password: "{{ env_var('POSTGRES__PASSWORD') }}"
       dbname: "{{ env_var('POSTGRES__DATABASE') }}"
-      schema: dm  # default, конкретные модели могут переопределять через +schema
+      schema: dds  # default, конкретные модели могут переопределять через +schema
 
       threads: 4
 
