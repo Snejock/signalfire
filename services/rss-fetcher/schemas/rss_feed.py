@@ -1,5 +1,5 @@
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator
@@ -7,7 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator
 from .location import Location
 
 
-class RSSFeedType(str, Enum):
+class RSSFeedType(StrEnum):
     """Перечисление типов RSS-лент (государственный, независимый)"""
     GOVERNMENT = "government"
     INDEPENDENT = "independent"

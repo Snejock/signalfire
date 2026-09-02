@@ -149,8 +149,8 @@ class Application:
             with open(path) as f:
                 data = yaml.safe_load(f)
                 return AppConfig(**data)
-        except FileNotFoundError:
-            raise FileNotFoundError(f"Config file not found: {path}")
+        except FileNotFoundError as err:
+            raise FileNotFoundError(f"Config file not found: {path}") from err
 
     async def _get_cursor(self):
         logger.info("Getting initial cursor from ClickHouse...")
@@ -178,5 +178,8 @@ class Application:
         next_open_dttm = self.calendar.get_next_open_dttm()
         now_dttm = datetime.now(self.calendar.timezone)
         wait_sec = max(0, int((next_open_dttm - now_dttm).total_seconds()))
-        logger.info(f"MOEX is closed. Waiting {timedelta(seconds=int(wait_sec))} until it opens at: {next_open_dttm.isoformat()}")
+        logger.info(
+            f"MOEX is closed. Waiting {timedelta(seconds=int(wait_sec))} until it opens at: "
+            f"{next_open_dttm.isoformat()}"
+        )
         await asyncio.sleep(wait_sec)

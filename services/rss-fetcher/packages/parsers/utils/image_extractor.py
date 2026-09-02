@@ -60,7 +60,7 @@ class ImageExtractor:
         return u.startswith("data:") or any(j in u for j in self.JUNK_MARKERS)
 
     def _pick(self, candidates: list[dict]) -> dict:
-        # определение минимального сначала по источнику (media_content > enclosure), затем по объявленной площади картинки
+        # минимум сначала по источнику (media_content > enclosure), затем по объявленной площади картинки
         return min(candidates, key=lambda c: (c["priority"], -(c["w"] * c["h"])))
 
     def _normalize(self, url: str, base: str) -> str:

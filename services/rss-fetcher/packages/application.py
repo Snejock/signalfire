@@ -61,7 +61,10 @@ class Application:
                     feed.cursor = max_cursor
 
                 except Exception as err:
-                    logger.error(f"Error in processing for feed_nm {feed.name} (feed_id {feed.id}): {err}", exc_info=True)
+                    logger.error(
+                        f"Error in processing for feed_nm {feed.name} (feed_id {feed.id}): {err}",
+                        exc_info=True,
+                    )
 
                 await asyncio.sleep(feed.interval)
 
