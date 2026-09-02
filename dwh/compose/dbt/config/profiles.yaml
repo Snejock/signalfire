@@ -1,0 +1,16 @@
+dwh:
+  target: prod
+  outputs:
+    prod:
+      type: postgres
+      host: "{{ env_var('POSTGRES__HOST') }}"
+      port: "{{ env_var('POSTGRES__PORT') | as_number }}"
+      user: "{{ env_var('POSTGRES__USER') }}"
+      password: "{{ env_var('POSTGRES__PASSWORD') }}"
+      dbname: "{{ env_var('POSTGRES__DATABASE') }}"
+      schema: dm  # default, конкретные модели могут переопределять через +schema
+
+      threads: 4
+
+      # keepalives_idle: 0
+      # sslmode: prefer

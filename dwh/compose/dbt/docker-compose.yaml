@@ -1,0 +1,23 @@
+services:
+  sgn-dbt:
+    build: .
+    container_name: sgn-dbt
+    env_file:
+      - path: ../../../.env
+        required: true
+    restart: unless-stopped
+    networks:
+      - dwh-net
+    ports:
+      - '38082:8081'
+    volumes:
+      - ../../dbt:/usr/app/dbt/signalfire
+      - ./config/profiles.yaml:/root/.dbt/profiles.yaml
+    working_dir: /usr/app/dbt/signalfire
+    stdin_open: true
+    tty: true
+    entrypoint: ['sleep', 'infinity']
+
+networks:
+  dwh-net:
+    external: true
