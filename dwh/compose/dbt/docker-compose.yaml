@@ -11,9 +11,9 @@ services:
     ports:
       - '38082:8081'
     volumes:
-      - ../../dbt:/usr/app/dbt/signalfire
+      - ../../dbt:/usr/app/dbt/dwh
       - ./config/profiles.yaml:/root/.dbt/profiles.yaml
-    working_dir: /usr/app/dbt/signalfire
+    working_dir: /usr/app/dbt/dwh
     stdin_open: true
     tty: true
     entrypoint: ['sleep', 'infinity']
