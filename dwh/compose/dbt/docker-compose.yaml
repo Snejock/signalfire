@@ -17,6 +17,15 @@ services:
     stdin_open: true
     tty: true
     entrypoint: ['sleep', 'infinity']
+    # Базовый образ dbt-core прописывает healthcheck 'dbt --version' (наследуется,
+    # если не переопределить) с дефолтным interval=30s. Это не дёшево: сама команда
+    # ~10с CPU (bootstrap CLI dbt — сканирование adapter-плагинов и т.п., не сеть),
+    # то есть контейнер непрерывно жжёт ~25% ядра. Тут этот контейнер — просто
+    # sleep-инфинити-цель для `docker exec sgn-dbt dbt run/compile ...` из Airflow
+    # (см. dwh/airflow/dags/SYS/DBT_RUN.py, DBT_COMPILE.py), и ни один сервис не
+    # зависит от его health-статуса — отключаем без потери функциональности.
+    healthcheck:
+      disable: true
 
 networks:
   dwh-net:
