@@ -3,7 +3,7 @@ from datetime import datetime
 from airflow import DAG
 from airflow.providers.standard.operators.empty import EmptyOperator
 from airflow.models.param import Param
-from dbt_parser import DbtParser
+from signalfire.dbt_parser import DbtParser
 
 
 dag_id = str(os.path.basename(__file__).replace('.py', ''))

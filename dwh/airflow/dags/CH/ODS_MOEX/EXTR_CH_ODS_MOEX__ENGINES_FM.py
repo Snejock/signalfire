@@ -3,7 +3,7 @@ import os
 import pendulum
 
 from airflow.sdk import dag
-from operators.MOEXToClickhouseOperator import MOEXToClickhouseOperator
+from signalfire.operators.MOEXToClickhouseOperator import MOEXToClickhouseOperator
 
 
 dag_id = str(os.path.basename(__file__).replace(".py", ""))
