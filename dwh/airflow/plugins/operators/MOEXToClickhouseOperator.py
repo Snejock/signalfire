@@ -17,12 +17,15 @@ class MOEXToClickhouseOperator(BaseOperator):
     - Типы колонок берутся из `metadata` и маппятся в базовые типы ClickHouse (без Nullable) с помощью
       внутреннего адаптера: string/uuid → String; int8/16/32/64 → Int8/16/32/64; double → Float64;
       datetime → DateTime; bool/boolean → Boolean; прочее → String.
-    - Таблица в ClickHouse пересоздаётся: все колонки, кроме `loaded_dttm` и ключа сортировки,
-      объявляются как Nullable(<Тип>). `loaded_dttm` всегда имеет тип DateTime и добавляется,
-      если отсутствует в исходных данных. Ключ сортировки MergeTree задаётся через `order_by_field`
-      (по умолчанию `loaded_dttm`). Если `order_by_field` не указан (None/""), используется `ORDER BY tuple()`.
+    - Таблица в ClickHouse пересоздаётся: колонки не Nullable, для каждой указывается DEFAULT
+      по её типу (см. `_TYPE_DEFAULTS`/`_sql_literal`) — этим же дефолтом заменяется `None` из ISS
+      перед вставкой. Кроме колонок из ответа ISS, оператор добавляет свои служебные:
+      `_loaded_dttm` (DateTime, момент запуска таска) и `_source_system` (LowCardinality(String),
+      константа `MOEX`). Ключ сортировки MergeTree задаётся через `order_by_field`; если не указан
+      (None/""), используется `ORDER BY tuple()`.
     - Вставка выполняется батчами (`batch_size`). Для каждой вставляемой строки оператор
-      проставляет актуальное значение `loaded_dttm` (Python datetime) в одноимённой колонке.
+      проставляет актуальное значение `_loaded_dttm` (Python datetime) и `_source_system` в
+      одноимённых колонках.
     - Поддерживается пагинация по параметру `start`: постраничные запросы продолжаются, пока приходят данные
       и если `is_pagination=True`.
     - Подключение к ClickHouse берётся из Airflow Connection (`connection_id`). Если коннект недоступен,
@@ -41,8 +44,19 @@ class MOEXToClickhouseOperator(BaseOperator):
     :param timeout: Таймаут HTTP-запроса к ISS в секундах; по умолчанию 30.
     :param is_pagination: Включить постраничную загрузку по `start`; по умолчанию True.
     """
-
     template_fields = ("iss_params", "url", "block_json", "trg_schema", "trg_table")
+    _SERVICE_COLUMNS = ("_loaded_dttm", "_source_system")  # служебные колонки, которые оператор проставляет сам (не приходят из ISS)
+    _SOURCE_SYSTEM = "MOEX"
+    _TYPE_DEFAULTS = {
+        "String": "",
+        "Int8": 0,
+        "Int16": 0,
+        "Int32": 0,
+        "Int64": 0,
+        "Float64": 0.0,
+        "DateTime": datetime(1970, 1, 1),
+        "Bool": False,
+    }
 
     def __init__(
         self,
@@ -80,12 +94,7 @@ class MOEXToClickhouseOperator(BaseOperator):
 
         self.columns: dict[str, str] = {}
         self.data: list[list[Any]] = []
-        self.loaded_dttm: datetime | None = None
-        # ВАЖНО: клиент создаём не здесь, а в execute(). __init__ отрабатывает при парсинге
-        # дага (в dag-processor), а Airflow 3 Task SDK резолвит Connection только внутри
-        # execution-контекста таска (через Execution API Server) — на парсинге его ещё нет,
-        # и BaseHook.get_connection() падает с AirflowNotFoundException, даже когда коннекшен
-        # реально существует в БД.
+        self._loaded_dttm: datetime | None = None
         self.connection_id = connection_id
         self.client: Client | None = None
 
@@ -93,7 +102,7 @@ class MOEXToClickhouseOperator(BaseOperator):
         self.client = self._get_client(self.connection_id)
 
         # Получение отметки даты и времени начала процесса
-        self.loaded_dttm = datetime.now()
+        self._loaded_dttm = datetime.now()
 
         self.log.info(f"MOEX ISS URL: {self.url}")
         self.log.info(f"ISS params: {self.iss_params}")
@@ -221,44 +230,62 @@ class MOEXToClickhouseOperator(BaseOperator):
             case _:
                 return "String"
 
+    @staticmethod
+    def _sql_literal(value: Any) -> str:
+        """Python-значение дефолта -> его литерал для DDL (DEFAULT ...)."""
+        if isinstance(value, bool):
+            return "true" if value else "false"
+        if isinstance(value, str):
+            return "'" + value.replace("'", "''") + "'"
+        if isinstance(value, datetime):
+            return f"toDateTime('{value.strftime('%Y-%m-%d %H:%M:%S')}')"
+        return str(value)
+
     def _recreate_table(self) -> None:
-        columns = list(self.columns.keys())
-        if "loaded_dttm" not in columns:
-            columns = ["loaded_dttm"] + columns
+        columns = list(self._SERVICE_COLUMNS) + list(self.columns.keys())
 
         query = f"""
-            DROP TABLE IF EXISTS `{self.trg_schema}`.`{self.trg_table}`
+            DROP TABLE IF EXISTS `{self.trg_schema}`.`{self.trg_table}` ON CLUSTER replicated
         """
         self.log.info(f"Drop table query: {query}")
         self.client.execute(query)
 
         column_stm = []
         for col in columns:
-            if col == "loaded_dttm":
+            if col == "_loaded_dttm":
                 column_stm.append(f"`{col}` DateTime")
-            elif col == self.order_by_field:
-                column_stm.append(f"`{col}` {self.columns[col]}")
+            elif col == "_source_system":
+                column_stm.append(f"`{col}` LowCardinality(String)")
             else:
-                column_stm.append(f"`{col}` Nullable({self.columns[col]})")
+                ch_type = self.columns[col]
+                column_stm.append(f"`{col}` {ch_type} DEFAULT {self._sql_literal(self._TYPE_DEFAULTS[ch_type])}")
 
         query = (
-            f"CREATE TABLE `{self.trg_schema}`.`{self.trg_table}` ("
+            f"CREATE TABLE `{self.trg_schema}`.`{self.trg_table}` ON CLUSTER replicated ("
             f"{', '.join(column_stm)}) "
-            f"ENGINE = MergeTree() "
+            f"ENGINE = ReplicatedMergeTree("
+            f"'/clickhouse/tables/{{shard}}/{self.trg_schema}/{self.trg_table}', '{{replica}}') "
             f"{f'ORDER BY (`{self.order_by_field}`)' if self.order_by_field else 'ORDER BY tuple()'}"
         )
         self.log.info(f"Create table query: {query}")
         self.client.execute(query)
 
     def _insert_batches(self) -> None:
-        columns = list(self.columns.keys())
-        if "loaded_dttm" not in columns:
-            columns = ["loaded_dttm"] + columns
-            self.data = [[self.loaded_dttm] + row for row in self.data]
+        column_list = list(self.columns.keys())
+
+        col_defaults = [self._TYPE_DEFAULTS[self.columns[c]] for c in column_list]
+        self.data = [
+            [v if v is not None else d for v, d in zip(row, col_defaults)]
+            for row in self.data
+        ]
+
+        service_values = [self._loaded_dttm, self._SOURCE_SYSTEM]
+        column_list = list(self._SERVICE_COLUMNS) + column_list
+        self.data = [service_values + row for row in self.data]
 
         query = (
             f"INSERT INTO `{self.trg_schema}`.`{self.trg_table}` "
-            f"({', '.join([f'`{c}`' for c in columns])}) VALUES"
+            f"({', '.join([f'`{c}`' for c in column_list])}) VALUES"
         )
 
         total_inserted_rows = 0
@@ -266,4 +293,5 @@ class MOEXToClickhouseOperator(BaseOperator):
             batch = self.data[i:i + self.batch_size]
             self.client.execute(query, batch)
             total_inserted_rows += len(batch)
-            self.log.info(f"Inserted batch {i+1}; total inserted: {total_inserted_rows} rows.")
+            batch_num = i // self.batch_size + 1
+            self.log.info(f"Inserted batch {batch_num}; total inserted: {total_inserted_rows} rows.")

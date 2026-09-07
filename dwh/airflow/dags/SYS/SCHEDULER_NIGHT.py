@@ -20,7 +20,7 @@ with DAG(
     default_args=default_args,
     schedule='0 3 * * *',
     catchup=False,
-    tags={'sys'},
+    tags={'SYS'},
     params={
         'start_dt': Param(
             None,
@@ -46,7 +46,7 @@ with DAG(
         dbt_project_dir=os.environ.get('DBT_PROJECT_DIR'),
         dbt_profiles_dir=os.environ.get('DBT_PROFILES_DIR'),
         dbt_target=os.environ.get('DBT_TARGET'),
-        dbt_tag='daily',
+        dbt_tag='NIGHT',
         dbt_vars={
             'start_dt': '{{ params.start_dt }}',
             'end_dt': '{{ params.end_dt }}'

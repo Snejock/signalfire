@@ -13,18 +13,18 @@ dag_id = str(os.path.basename(__file__).replace(".py", ""))
     start_date=datetime(2023, 1, 1),
     schedule=None,
     catchup=False,
-    tags={"moex"}
+    tags={"MOEX", "NIGHT"}
 )
 def extract_data():
     MOEXToClickhouseOperator(
         task_id="extract_data",
         url="https://iss.moex.com/iss/index.json",
-        block_json="durations",
+        block_json="markets",
         iss_params={},
         connection_id="clickhouse_connection",
-        trg_schema="ods_moex",
-        trg_table="durations_fm",
-        order_by_field="loaded_dttm",
+        trg_schema="stg",
+        trg_table="markets",
+        order_by_field="_loaded_dttm",
         is_pagination=False
     )
 

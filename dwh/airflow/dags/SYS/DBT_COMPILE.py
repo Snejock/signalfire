@@ -18,7 +18,7 @@ with DAG(
     description='',
     schedule=None,
     catchup=False,
-    tags={'sys'}
+    tags={'SYS'}
 ) as dag:
     dbt_compile = BashOperator(
         task_id='dbt_compile',

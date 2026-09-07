@@ -13,7 +13,7 @@ dag_id = str(os.path.basename(__file__).replace(".py", ""))
     start_date=pendulum.datetime(2023, 1, 1, tz="UTC"),
     schedule=None,
     catchup=False,
-    tags={"moex"}
+    tags={"MOEX", "NIGHT"}
 )
 def extract_data():
     MOEXToClickhouseOperator(
@@ -22,9 +22,9 @@ def extract_data():
         block_json="engines",
         iss_params={"date": "today"},
         connection_id="clickhouse_connection",
-        trg_schema="ods_moex",
-        trg_table="engines_fm",
-        order_by_field="loaded_dttm",
+        trg_schema="stg",
+        trg_table="engines",
+        order_by_field="_loaded_dttm",
         is_pagination=False
     )
 

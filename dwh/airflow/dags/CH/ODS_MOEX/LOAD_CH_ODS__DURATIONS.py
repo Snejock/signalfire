@@ -1,30 +1,30 @@
 import os
 
-import pendulum
+from datetime import datetime
 
 from airflow.sdk import dag
 from signalfire.operators.MOEXToClickhouseOperator import MOEXToClickhouseOperator
 
-
 dag_id = str(os.path.basename(__file__).replace(".py", ""))
+
 
 @dag(
     dag_id=dag_id,
-    start_date=pendulum.datetime(2023, 1, 1, tz="UTC"),
+    start_date=datetime(2023, 1, 1),
     schedule=None,
     catchup=False,
-    tags={"moex"}
+    tags={"MOEX", "NIGHT"}
 )
 def extract_data():
     MOEXToClickhouseOperator(
         task_id="extract_data",
         url="https://iss.moex.com/iss/index.json",
-        block_json="boards",
+        block_json="durations",
         iss_params={},
         connection_id="clickhouse_connection",
-        trg_schema="ods_moex",
-        trg_table="boards_fm",
-        order_by_field="loaded_dttm",
+        trg_schema="stg",
+        trg_table="durations",
+        order_by_field="_loaded_dttm",
         is_pagination=False
     )
 

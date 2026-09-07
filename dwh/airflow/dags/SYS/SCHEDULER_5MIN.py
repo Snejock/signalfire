@@ -20,7 +20,7 @@ with DAG(
     default_args=default_args,
     schedule='*/5 * * * *',
     catchup=False,
-    tags={'sys'},
+    tags={'SYS'},
     params={
         'start_dt': Param(
             None,

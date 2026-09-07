@@ -19,7 +19,7 @@ with DAG(
     schedule=None,
     catchup=False,
     params={'model_name': ''},
-    tags={'sys'}
+    tags={'SYS'}
 ) as dag:
     dbt_run = BashOperator(
         task_id='dbt_compile',
