@@ -24,7 +24,7 @@ def extract_data():
         connection_id="clickhouse_connection",
         trg_schema="stg",
         trg_table="board_groups",
-        order_by_field="board_group_id",
+        order_by_field="id",
         is_pagination=False
     )
 
