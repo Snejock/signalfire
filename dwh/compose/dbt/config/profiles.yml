@@ -1,4 +1,4 @@
-dwh:
+signalfire:
   target: prod
   outputs:
     prod:
