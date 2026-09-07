@@ -81,9 +81,17 @@ class MOEXToClickhouseOperator(BaseOperator):
         self.columns: dict[str, str] = {}
         self.data: list[list[Any]] = []
         self.loaded_dttm: datetime | None = None
-        self.client = self._get_client(connection_id)
+        # ВАЖНО: клиент создаём не здесь, а в execute(). __init__ отрабатывает при парсинге
+        # дага (в dag-processor), а Airflow 3 Task SDK резолвит Connection только внутри
+        # execution-контекста таска (через Execution API Server) — на парсинге его ещё нет,
+        # и BaseHook.get_connection() падает с AirflowNotFoundException, даже когда коннекшен
+        # реально существует в БД.
+        self.connection_id = connection_id
+        self.client: Client | None = None
 
     def execute(self, context: dict[str, Any]) -> None:
+        self.client = self._get_client(self.connection_id)
+
         # Получение отметки даты и времени начала процесса
         self.loaded_dttm = datetime.now()
 
