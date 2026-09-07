@@ -7,6 +7,11 @@ from airflow.providers.standard.operators.bash import BashOperator
 
 dag_id = str(os.path.basename(__file__).replace('.py', ''))
 
+# Пути — внутри контейнера sgn-dbt (см. dwh/compose/dbt/docker-compose.yaml: volumes/working_dir)
+DBT_TARGET = os.environ.get('DBT_TARGET', 'prod')
+DBT_PROFILES_DIR = os.environ.get('DBT_PROFILES_DIR', '/root/.dbt')
+DBT_PROJECT_DIR = os.environ.get('DBT_PROJECT_DIR', '/usr/app/dbt/dwh')
+
 with DAG(
     dag_id=dag_id,
     start_date=datetime(2020, 12, 31),
@@ -19,9 +24,9 @@ with DAG(
         task_id='dbt_compile',
         bash_command=(f"""
             docker exec sgn-dbt dbt compile \
-            --target {os.environ.get('DBT_TARGET', 'prod')} \
-            --profiles-dir {os.environ.get('DBT_PROFILES_DIR')} \
-            --project-dir {os.environ.get('DBT_PROJECT_DIR')}
+            --target {DBT_TARGET} \
+            --profiles-dir {DBT_PROFILES_DIR} \
+            --project-dir {DBT_PROJECT_DIR}
         """
         ),
         # env={

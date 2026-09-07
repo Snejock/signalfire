@@ -42,10 +42,10 @@ class DbtParser:
                  dbt_target=None,dbt_tag=None, dbt_run_group_name='dbt_run', dbt_test_group_name='dbt_test',
                  dbt_vars=None):
         self.dag = dag
-        self.dbt_global_cli_flags = dbt_global_cli_flags
-        self.dbt_project_dir = dbt_project_dir
-        self.dbt_profiles_dir = dbt_profiles_dir
-        self.dbt_target = dbt_target
+        self.dbt_global_cli_flags = dbt_global_cli_flags or ''
+        self.dbt_project_dir = dbt_project_dir or '/usr/app/dbt/dwh'
+        self.dbt_profiles_dir = dbt_profiles_dir or '/root/.dbt'
+        self.dbt_target = dbt_target or 'prod'
         self.dbt_tag = dbt_tag
         self.dbt_vars = dbt_vars or {}
 
@@ -60,8 +60,7 @@ class DbtParser:
 
         Returns: A JSON object containing the dbt manifest content.
         """
-        # manifest_path = os.path.join(self.dbt_project_dir, 'dbt', 'target', 'manifest.json')
-        manifest_path = os.path.abspath('/opt/dwh/dbt/target/manifest.json')
+        manifest_path = os.path.abspath('/opt/dbt/signalfire/target/manifest.json')
         try:
             if not os.path.exists(manifest_path):
                 raise FileNotFoundError(f'Manifest file not found: {manifest_path}')
@@ -107,7 +106,7 @@ class DbtParser:
             task_id=node_name,
             task_group=task_group,
             bash_command=(f"""
-                docker exec dwh_dbt dbt {self.dbt_global_cli_flags} {dbt_verb} \
+                docker exec sgn-dbt dbt {self.dbt_global_cli_flags} {dbt_verb} \
                 --target {self.dbt_target} \
                 --models {model_name} \
                 --profiles-dir {self.dbt_profiles_dir} \
