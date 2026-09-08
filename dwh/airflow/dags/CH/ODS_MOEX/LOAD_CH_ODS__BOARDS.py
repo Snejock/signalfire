@@ -24,7 +24,7 @@ def extract_data():
         connection_id="clickhouse_connection",
         trg_schema="stg",
         trg_table="boards",
-        order_by_field="_loaded_dttm",
+        order_by_field="boardid",
         is_pagination=False
     )
 

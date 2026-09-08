@@ -24,7 +24,7 @@ def extract_data():
         connection_id="clickhouse_connection",
         trg_schema="stg",
         trg_table="security_collections",
-        order_by_field="_loaded_dttm",
+        order_by_field="id",
         is_pagination=False
     )
 
