@@ -245,7 +245,7 @@ class MOEXToClickhouseOperator(BaseOperator):
         columns = list(self._SERVICE_COLUMNS) + list(self.columns.keys())
 
         query = f"""
-            DROP TABLE IF EXISTS `{self.trg_schema}`.`{self.trg_table}` ON CLUSTER replicated
+            DROP TABLE IF EXISTS `{self.trg_schema}`.`{self.trg_table}` ON CLUSTER replicated SYNC
         """
         self.log.info(f"Drop table query: {query}")
         self.client.execute(query)
