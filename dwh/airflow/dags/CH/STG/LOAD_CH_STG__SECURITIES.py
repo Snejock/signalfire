@@ -2,11 +2,13 @@ import os
 
 import pendulum
 
-from airflow.sdk import dag
+from airflow.sdk import Asset, dag
 from signalfire.operators.MOEXToClickhouseOperator import MOEXToClickhouseOperator
 
 
 dag_id = str(os.path.basename(__file__).replace(".py", ""))
+
+CH_STG__SECURITIES_ASSET = Asset("clickhouse://stg/securities")
 
 @dag(
     dag_id=dag_id,
@@ -24,7 +26,8 @@ def extract_data():
         connection_id="clickhouse_connection",
         trg_schema="stg",
         trg_table="securities",
-        order_by_field="secid"
+        order_by_field="secid",
+        outlets=[CH_STG__SECURITIES_ASSET]
     )
 
 extract_data()
